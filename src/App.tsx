@@ -1,10 +1,26 @@
 import Map from 'react-map-gl';
+import useCreateRoute from './hooks/useCreateRoute';
+import { useState } from 'react';
 function App() {
+	const { createRoute, data, loading, error } = useCreateRoute();
+	const [origin, setOrigin] = useState('');
+	const [destination, setDestination] = useState('');
+
+	const handleCreateRoute = () => {
+		createRoute({ origin, destination });
+	};
+
 	return (
 		<main className="grid grid-cols-3 h-screen">
 			<div className="col-span-1 px-8 py-8">
 				<h1 className="text-2xl mb-6">Papamove</h1>
-				<form className="">
+				<form
+					className=""
+					onSubmit={(event) => {
+						event.preventDefault();
+						handleCreateRoute();
+					}}
+				>
 					<div className="my-2">
 						<label
 							className="block mb-2 text-sm font-medium text-gray-900"
@@ -18,6 +34,8 @@ function App() {
 							name="origin"
 							id="origin"
 							placeholder="Innocenter"
+							value={origin}
+							onChange={(event) => setOrigin(event.target.value)}
 							required
 						/>
 					</div>
@@ -34,6 +52,10 @@ function App() {
 							name="dropoff"
 							id="dropoff"
 							placeholder="Science Park"
+							value={destination}
+							onChange={(event) =>
+								setDestination(event.target.value)
+							}
 							required
 						/>
 					</div>
@@ -54,11 +76,9 @@ function App() {
 				</form>
 				<div>
 					<h2 className="text-xl font-semibold">Results</h2>
-					<p>total distance: 2000</p>
-					<p>total time: 1800</p>
-					<p className="text-red-500">
-						Location not accessible by car
-					</p>
+					{loading && <p>Loading...</p>}
+					{error && <p>Error: {error.message}</p>}
+					{data && <div>{data.token}</div>}
 				</div>
 			</div>
 			<div className="col-span-2">
