@@ -6,6 +6,7 @@ import useFetchRoute from './hooks/useFetchRoute';
 import { CreateRoute } from './types';
 import ResultDisplay from './components/ResultDisplay';
 import MarkerIcon from './components/MarkerIcon';
+import useDrivingRoute from './hooks/useDrivingRoute';
 function App() {
 	const {
 		createRoute,
@@ -19,56 +20,16 @@ function App() {
 		loading: fetchLoading,
 		error: fetchError,
 	} = useFetchRoute();
+	const { getDrivingRoute, geoJSON, loading, error } = useDrivingRoute();
 	const [routeData, setRouteData] = useState<CreateRoute>({
 		origin: '',
 		destination: '',
 	});
-	const [paths, setPaths] = useState<[string, string][]>([
-		['22.372081', '114.107877'],
-		['22.326442', '114.167811'],
-		['22.284419', '114.159510'],
+	const [waypoints, setWaypoints] = useState<[number, number][]>([
+		[114.107877, 22.372081],
+		[114.167811, 22.326442],
+		[114.15951, 22.284419],
 	]);
-	const [geojson, setGeojson] = useState<GeoJSON.Feature>({
-		type: 'Feature',
-		properties: {},
-		geometry: {
-			type: 'LineString',
-			coordinates: [
-				[114.107848, 22.372035],
-				[114.107642, 22.372144],
-				[114.106831, 22.371418],
-				[114.107895, 22.370431],
-				[114.108374, 22.370505],
-				[114.108785, 22.370674],
-				[114.114838, 22.364856],
-				[114.11822, 22.362546],
-				[114.120548, 22.358294],
-				[114.126053, 22.353036],
-				[114.126241, 22.351663],
-				[114.12525, 22.348116],
-				[114.125129, 22.346235],
-				[114.126177, 22.3447],
-				[114.128428, 22.343677],
-				[114.130626, 22.342578],
-				[114.132782, 22.339253],
-				[114.133687, 22.338442],
-				[114.138467, 22.337438],
-				[114.144414, 22.336301],
-				[114.146134, 22.335009],
-				[114.147323, 22.335254],
-				[114.149043, 22.335819],
-				[114.149933, 22.335563],
-				[114.15122, 22.333314],
-				[114.162308, 22.324887],
-				[114.164117, 22.323606],
-				[114.165202, 22.323505],
-				[114.167757, 22.324051],
-				[114.167537, 22.325016],
-				[114.168125, 22.325125],
-				[114.167793, 22.326431],
-			],
-		},
-	});
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
@@ -76,19 +37,13 @@ function App() {
 
 	useEffect(() => {
 		if (route && route.status === 'success') {
-			setPaths(route.path!);
+			// setPaths(route.path!);
 		}
 	}, [route]);
 
 	useEffect(() => {
-		fetch(
-			`https://api.mapbox.com/directions/v5/mapbox/driving/114.107877,22.372081;114.167811,22.326442?alternatives=true&geometries=geojson&overview=simplified&steps=false&notifications=none&access_token=${
-				import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN
-			}`
-		)
-			.then((res) => res.json())
-			.then((data) => console.log(data));
-	}, [paths]);
+		getDrivingRoute(waypoints);
+	}, [waypoints]);
 
 	const handleCreateRoute = () => {
 		createRoute(routeData);
@@ -193,7 +148,7 @@ function App() {
 					}}
 					mapStyle="mapbox://styles/mapbox/streets-v9"
 				>
-					<Source type="geojson" data={geojson}>
+					<Source type="geojson" data={geoJSON}>
 						<Layer
 							id="route"
 							type="line"
@@ -208,11 +163,11 @@ function App() {
 							}}
 						/>
 					</Source>
-					{paths.map((path, index) => (
+					{waypoints.map((path, index) => (
 						<Marker
 							key={index}
-							longitude={parseFloat(path[1])}
-							latitude={parseFloat(path[0])}
+							longitude={path[0]}
+							latitude={path[1]}
 							color="blue"
 							anchor="center"
 						>
