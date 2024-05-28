@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Map from 'react-map-gl';
+import Map, { Marker } from 'react-map-gl';
 import useCreateRoute from './hooks/useCreateRoute';
 import { useEffect, useState } from 'react';
 import useFetchRoute from './hooks/useFetchRoute';
@@ -22,10 +22,21 @@ function App() {
 		origin: '',
 		destination: '',
 	});
+	const [paths, setPaths] = useState<[string, string][]>([
+		['22.372081', '114.107877'],
+		['22.326442', '114.167811'],
+		['22.284419', '114.159510'],
+	]);
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
 	}, [token]);
+
+	useEffect(() => {
+		if (route && route.status === 'success') {
+			setPaths(route.path!);
+		}
+	}, [route]);
 
 	const handleCreateRoute = () => {
 		createRoute(routeData);
@@ -125,7 +136,16 @@ function App() {
 						zoom: 14,
 					}}
 					mapStyle="mapbox://styles/mapbox/streets-v9"
-				/>
+				>
+					{paths.map((path, index) => (
+						<Marker
+							key={index}
+							longitude={parseFloat(path[1])}
+							latitude={parseFloat(path[0])}
+							anchor="bottom"
+						></Marker>
+					))}
+				</Map>
 			</div>
 		</main>
 	);
