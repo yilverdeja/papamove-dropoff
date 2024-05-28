@@ -1,10 +1,26 @@
 import Map from 'react-map-gl';
 import useCreateRoute from './hooks/useCreateRoute';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useFetchRoute from './hooks/useFetchRoute';
 function App() {
-	const { createRoute, data, loading, error } = useCreateRoute();
+	const {
+		createRoute,
+		token,
+		loading: createLoading,
+		error: createError,
+	} = useCreateRoute();
+	const {
+		fetchRoute,
+		route,
+		loading: fetchLoading,
+		error: fetchError,
+	} = useFetchRoute();
 	const [origin, setOrigin] = useState('');
 	const [destination, setDestination] = useState('');
+
+	useEffect(() => {
+		if (token) fetchRoute(token);
+	}, [token]);
 
 	const handleCreateRoute = () => {
 		createRoute({ origin, destination });
@@ -76,9 +92,10 @@ function App() {
 				</form>
 				<div>
 					<h2 className="text-xl font-semibold">Results</h2>
-					{loading && <p>Loading...</p>}
-					{error && <p>Error: {error.message}</p>}
-					{data && <div>{data.token}</div>}
+					{createLoading || fetchLoading ? <p>Loading...</p> : null}
+					{createError && <p>Create Error: {createError.message}</p>}
+					{fetchError && <p>Fetch Error: {fetchError.message}</p>}
+					{route && <div>{route.status}</div>}
 				</div>
 			</div>
 			<div className="col-span-2">

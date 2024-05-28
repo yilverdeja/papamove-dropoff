@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CreateRoute, CreateRouteResponse } from '../types';
+import { GetRouteResponse } from '../types';
 import { useCallback, useState } from 'react';
 
 const axiosInstance = axios.create({
@@ -9,33 +9,32 @@ const axiosInstance = axios.create({
 	},
 });
 
-const useCreateRoute = () => {
+const useFetchRoute = () => {
+	const [route, setRoute] = useState<GetRouteResponse | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
-	const [token, setToken] = useState<string | null>(null);
 
-	const createRoute = useCallback(async (routeData: CreateRoute) => {
-		setToken(null);
+	const fetchRoute = useCallback(async (token: string) => {
+		setRoute(null);
 		setError(null);
 		setLoading(true);
 		try {
 			const response = await axiosInstance
-				.post<CreateRouteResponse>('/route', routeData)
+				.get<GetRouteResponse>(`/route/${token}`)
 				.then((res) => res.data);
-			setToken(response.token);
-			setError(null);
+			setRoute(response);
 			setLoading(false);
 		} catch (err) {
 			if (err instanceof Error) setError(err);
 			else setError(new Error(String(err)));
-			setToken(null);
+			setRoute(null);
 			setLoading(false);
 		} finally {
 			setLoading(false);
 		}
 	}, []);
 
-	return { createRoute, token, loading, error };
+	return { fetchRoute, route, loading, error };
 };
 
-export default useCreateRoute;
+export default useFetchRoute;
