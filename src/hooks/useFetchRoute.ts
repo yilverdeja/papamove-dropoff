@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { GetRouteResponse } from '../types';
 import { useCallback, useState } from 'react';
 
-const maxRetries = 5;
+const maxRetries = 1;
 
 const axiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_APP_URL,
@@ -33,20 +33,18 @@ const useFetchRoute = () => {
 							fetchData(retryCount + 1);
 						}, Math.pow(2, retryCount) * 1000); // exponential backoff to reduce server calls
 					} else {
-						throw new Error('Max retries attempts reached');
+						throw new Error('Unable to fetch route');
 					}
 				} else if (response.status === 'success') {
 					setRoute(response);
 					setLoading(false);
 				} else {
-					throw new Error('Failed to fetch route');
+					throw new Error('Unable to fetch route');
 				}
 			} catch (err) {
 				if (err instanceof Error) setError(err);
-				else setError(new Error(String(err)));
+				else setError(new Error('An unknown error has occurred'));
 				setRoute(null);
-				setLoading(false);
-			} finally {
 				setLoading(false);
 			}
 		};

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { CreateRoute, CreateRouteResponse } from '../types';
 import { useCallback, useState } from 'react';
 
@@ -27,7 +27,7 @@ const useCreateRoute = () => {
 			setLoading(false);
 		} catch (err) {
 			if (err instanceof Error) setError(err);
-			else setError(new Error(String(err)));
+			else setError(new Error('An unknown error has occurred'));
 			setToken(null);
 			setLoading(false);
 		} finally {

@@ -15,30 +15,43 @@ const ResultDisplay = ({
 	createLoading,
 	fetchLoading,
 }: Props) => {
-	if (createLoading || fetchLoading) return <p>Loading...</p>;
-	if (createError) return <p>{createError.message}</p>;
-	if (fetchError) return <p>{fetchError.message}</p>;
+	// Handle loading state
+	if (createLoading || fetchLoading) {
+		return <p>Fetching Route...</p>;
+	}
 
-	if (route)
+	// Handle errors
+	const handleError = (error: Error) => {
+		if (error && error.message === 'Request failed with status code 500') {
+			return "(500 Internal Server Error) Something's wrong. Please retry again in a moment.";
+		}
+		return error.message;
+	};
+
+	if (createError) {
+		return <p className="text-red-500">{handleError(createError)}</p>;
+	}
+
+	if (fetchError) {
+		return <p className="text-red-500">{handleError(fetchError)}</p>;
+	}
+
+	// Handle route status
+	if (route) {
 		return (
 			<div>
 				{route.status === 'failure' && (
-					<p>Route failed: ${route.error}</p>
-				)}
-				{route.status === 'in progress' && (
-					<p>
-						The route is still in progress. Please wait a moment...
-					</p>
+					<p className="text-red-500">Route failed: {route.error}</p>
 				)}
 				{route.status === 'success' && (
 					<div>
-						<p>Path: {route.path?.join(', ').toString()}</p>
 						<p>Distance: {route.total_distance}</p>
 						<p>Time: {route.total_time}</p>
 					</div>
 				)}
 			</div>
 		);
+	}
 };
 
 export default ResultDisplay;

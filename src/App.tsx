@@ -116,6 +116,10 @@ function App() {
 				</form>
 				<div>
 					<h2 className="text-xl font-semibold">Results</h2>
+					<p className="pb-4">
+						Set a starting location and a dropoff point, and click
+						Submit to generate a route
+					</p>
 					<ResultDisplay
 						createError={createError}
 						fetchError={fetchError}
