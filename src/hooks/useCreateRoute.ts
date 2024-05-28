@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { CreateRoute, CreateRouteResponse } from '../types';
 import { useCallback, useState } from 'react';
 
