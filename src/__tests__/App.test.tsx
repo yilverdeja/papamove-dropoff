@@ -10,7 +10,7 @@ import {
 import { GetRouteResponse } from '../types';
 
 // To Test
-import App from '../App';
+import App from '../App.1';
 
 // Type definitions for mocking
 interface CreateRouteHook {

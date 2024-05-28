@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import useFetchRoute from './hooks/useFetchRoute';
 import { CreateRoute } from './types';
 import ResultDisplay from './components/ResultDisplay';
+import MarkerIcon from './components/MarkerIcon';
 function App() {
 	const {
 		createRoute,
@@ -146,8 +147,11 @@ function App() {
 							key={index}
 							longitude={parseFloat(path[1])}
 							latitude={parseFloat(path[0])}
-							anchor="bottom"
-						></Marker>
+							color="blue"
+							anchor="center"
+						>
+							<MarkerIcon index={index + 1} />
+						</Marker>
 					))}
 				</Map>
 			</div>
