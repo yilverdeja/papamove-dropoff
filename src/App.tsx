@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Map from 'react-map-gl';
 import useCreateRoute from './hooks/useCreateRoute';
 import { useEffect, useState } from 'react';
 import useFetchRoute from './hooks/useFetchRoute';
+import { CreateRoute } from './types';
 function App() {
 	const {
 		createRoute,
@@ -15,15 +17,17 @@ function App() {
 		loading: fetchLoading,
 		error: fetchError,
 	} = useFetchRoute();
-	const [origin, setOrigin] = useState('');
-	const [destination, setDestination] = useState('');
+	const [routeData, setRouteData] = useState<CreateRoute>({
+		origin: '',
+		destination: '',
+	});
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
 	}, [token]);
 
 	const handleCreateRoute = () => {
-		createRoute({ origin, destination });
+		createRoute(routeData);
 	};
 
 	return (
@@ -50,8 +54,13 @@ function App() {
 							name="origin"
 							id="origin"
 							placeholder="Innocenter"
-							value={origin}
-							onChange={(event) => setOrigin(event.target.value)}
+							value={routeData.origin}
+							onChange={(event) =>
+								setRouteData({
+									...routeData,
+									origin: event.target.value,
+								})
+							}
 							required
 						/>
 					</div>
@@ -68,9 +77,12 @@ function App() {
 							name="dropoff"
 							id="dropoff"
 							placeholder="Science Park"
-							value={destination}
+							value={routeData.destination}
 							onChange={(event) =>
-								setDestination(event.target.value)
+								setRouteData({
+									...routeData,
+									destination: event.target.value,
+								})
 							}
 							required
 						/>
