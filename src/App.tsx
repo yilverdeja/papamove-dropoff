@@ -4,6 +4,7 @@ import useCreateRoute from './hooks/useCreateRoute';
 import { useEffect, useState } from 'react';
 import useFetchRoute from './hooks/useFetchRoute';
 import { CreateRoute } from './types';
+import ResultDisplay from './components/ResultDisplay';
 function App() {
 	const {
 		createRoute,
@@ -104,10 +105,13 @@ function App() {
 				</form>
 				<div>
 					<h2 className="text-xl font-semibold">Results</h2>
-					{createLoading || fetchLoading ? <p>Loading...</p> : null}
-					{createError && <p>Create Error: {createError.message}</p>}
-					{fetchError && <p>Fetch Error: {fetchError.message}</p>}
-					{route && <div>{route.status}</div>}
+					<ResultDisplay
+						createError={createError}
+						fetchError={fetchError}
+						createLoading={createLoading}
+						fetchLoading={fetchLoading}
+						route={route}
+					/>
 				</div>
 			</div>
 			<div className="col-span-2">
