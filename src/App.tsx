@@ -25,11 +25,7 @@ function App() {
 		origin: '',
 		destination: '',
 	});
-	const [waypoints, setWaypoints] = useState<[number, number][]>([
-		[114.107877, 22.372081],
-		[114.167811, 22.326442],
-		[114.15951, 22.284419],
-	]);
+	const [waypoints, setWaypoints] = useState<[number, number][] | null>(null);
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
@@ -37,12 +33,20 @@ function App() {
 
 	useEffect(() => {
 		if (route && route.status === 'success') {
-			// setPaths(route.path!);
+			const paths = route.path!.map((path) => {
+				const [first, second] = path;
+				return [parseFloat(second), parseFloat(first)] as [
+					number,
+					number
+				];
+			});
+			console.log(paths);
+			setWaypoints(paths);
 		}
 	}, [route]);
 
 	useEffect(() => {
-		getDrivingRoute(waypoints);
+		if (waypoints) getDrivingRoute(waypoints);
 	}, [waypoints]);
 
 	const handleCreateRoute = () => {
@@ -148,32 +152,35 @@ function App() {
 					}}
 					mapStyle="mapbox://styles/mapbox/streets-v9"
 				>
-					<Source type="geojson" data={geoJSON}>
-						<Layer
-							id="route"
-							type="line"
-							source="route"
-							layout={{
-								'line-join': 'round',
-								'line-cap': 'round',
-							}}
-							paint={{
-								'line-color': 'brown',
-								'line-width': 5,
-							}}
-						/>
-					</Source>
-					{waypoints.map((path, index) => (
-						<Marker
-							key={index}
-							longitude={path[0]}
-							latitude={path[1]}
-							color="blue"
-							anchor="center"
-						>
-							<MarkerIcon index={index + 1} />
-						</Marker>
-					))}
+					{geoJSON && (
+						<Source type="geojson" data={geoJSON}>
+							<Layer
+								id="route"
+								type="line"
+								source="route"
+								layout={{
+									'line-join': 'round',
+									'line-cap': 'round',
+								}}
+								paint={{
+									'line-color': 'brown',
+									'line-width': 5,
+								}}
+							/>
+						</Source>
+					)}
+					{waypoints &&
+						waypoints.map((path, index) => (
+							<Marker
+								key={index}
+								longitude={path[0]}
+								latitude={path[1]}
+								color="blue"
+								anchor="center"
+							>
+								<MarkerIcon index={index + 1} />
+							</Marker>
+						))}
 				</Map>
 			</div>
 		</main>
