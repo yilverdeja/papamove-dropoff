@@ -57,7 +57,10 @@ const useFetchRoute = () => {
 			if (data.status === 'success') {
 				setRoute(data);
 			} else {
-				throw new Error(data.error);
+				const errMessage = data.error
+					? data.error
+					: 'Could not find a suitable route';
+				throw new Error(errMessage);
 			}
 		} catch (err) {
 			if (err instanceof Error) {
