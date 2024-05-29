@@ -27,14 +27,8 @@ function App() {
 		getDrivingRoute,
 		geoJSON,
 		loading: routeLoading,
-		error: routeError,
 	} = useDrivingRoute();
-	const {
-		fetchSuggestions,
-		suggestions: sugs,
-		loading: suggestionsLoading,
-		error: suggestionsError,
-	} = useAutocomplete();
+	const { fetchSuggestions, suggestions: sugs } = useAutocomplete();
 	const [routeData, setRouteData] = useState<CreateRoute>({
 		origin: '',
 		destination: '',
