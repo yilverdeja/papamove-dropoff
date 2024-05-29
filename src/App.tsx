@@ -81,6 +81,8 @@ function App() {
 	}, [debouncedDestination]);
 
 	const handleCreateRoute = () => {
+		if (createLoading || fetchLoading) return;
+		console.log('fetch');
 		createRoute(routeData);
 	};
 
@@ -91,6 +93,9 @@ function App() {
 				<form
 					autoComplete="off"
 					className=""
+					onSubmit={(event) => {
+						event.preventDefault();
+					}}
 					onReset={() => {
 						setRouteData({ origin: '', destination: '' });
 					}}
@@ -139,9 +144,13 @@ function App() {
 					<div className="flex gap-4 my-4">
 						<button
 							className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-							type="button"
+							type="submit"
 							onClick={() => {
-								handleCreateRoute();
+								if (
+									routeData.origin != '' &&
+									routeData.destination != ''
+								)
+									handleCreateRoute();
 							}}
 							disabled={
 								createLoading && fetchLoading && routeLoading

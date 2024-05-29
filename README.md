@@ -241,3 +241,13 @@ describe('useFetchRoute', () => {
 ### Add Testing
 
 See above on how I'd implenent it.
+
+### UI Improvements
+
+-   Layer the form over the map on mobile screens so users don't have to scroll
+-   Improve autocomplete input component
+
+### Additional Features
+
+-   For every successful response (status = success or failure), save it in a state management so the user doesn't have to do the same request twice and call the backend
+-   Users can see their successful requests (status = success) below the results, and when clicked it will show the markers and the route on the map of that previous request
