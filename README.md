@@ -129,3 +129,115 @@ Main dependencies are:
 -   **react-mapbox-gl**: react wrapper for the mapbox-gl
 
 ## Testing
+
+Unfortunately, I couldn't get the testing to work.
+
+I couldn't figure out how to mock the axios response for the different hooks. This is my psuedo implementation for the testing of the main hook functionalities.
+
+I'm using vitest, and the react testing-libray.
+
+### useCreateRoute
+
+```typescript
+import axios from 'axios';
+import { MockedFunction, vi } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import useCreateRoute from '../../hooks/useCreateRoute';
+
+// Mock axios
+vi.mock('axios', () => {
+	return {
+		default: {
+			post: vi.fn(),
+			get: vi.fn(),
+			delete: vi.fn(),
+			put: vi.fn(),
+			create: vi.fn().mockReturnThis(),
+			interceptors: {
+				request: {
+					use: vi.fn(),
+					eject: vi.fn(),
+				},
+				response: {
+					use: vi.fn(),
+					eject: vi.fn(),
+				},
+			},
+		},
+	};
+});
+
+const mockPost = axios.post as MockedFunction<typeof axios.post>;
+describe('useCreateHook', () => {
+	it('should return a token on a valid request', async () => {
+		mockPost.mockResolvedValue(() => Promise.resolve({ token: 'test' }));
+		const { result } = renderHook(() => useCreateHook());
+		act(() => result.current.createRoute({ origin: '', destination: '' }));
+		await waitFor(() => {
+			expect(result.current.token).toEqual('test');
+			// test for .error and .loading as null and false
+		});
+	});
+
+	it('should return an error on an internal server error', async () => {
+		mockPost.mockRejectedValue(() => Promise.reject(/** 500 error */));
+		const { result } = renderHook(() => useCreateHook());
+		act(() => result.current.createRoute({ origin: '', destination: '' }));
+		await waitFor(() => {
+			expect(result.current.error).not.toBeNull();
+			// test for .token and .loading as null and false
+		});
+	});
+});
+```
+
+### useFetchRoute
+
+Following the tests in useCreateRoute, this is just a more basic approach for the different tests using comments.
+
+```typescript
+/** imports and other variables set before this */
+describe('useFetchRoute', () => {
+	it('should return route information on a valid request', async () => {
+		// mock get returns status of "success" with path, total_distance and total_time parameters
+		// tests fetchRoute in the hook
+		// expects the hooks "route" obj to have the parameters set above
+	});
+
+	it('should return status failure when the backend is unable to complete request', async () => {
+		// mock get returns status of "failure"
+		// tests fetchRoute in the hook
+		// expects the error to be set to "Could not find a suitable route"
+	});
+
+	it('should return status failure when the backend is finds location is not accessible', async () => {
+		// mock get returns status of "failure" with an error of "Location not accessible"
+		// tests fetchRoute in the hook
+		// expects the error to be set to "Location not accessible"
+	});
+
+	it('should return an error on internal server error', async () => {
+		// mock throws an internal 500 server error
+		// tests fetchRoute in the hook
+		// expects the error to be set to internal server error message
+	});
+
+	it('should keep retrying if the backend is in progress until an error occurs', async () => {
+		// mock to return status "in progress" around 3-5 times, and then it throws an internal server error
+		// tests fetchRoute in the hook
+		// expects the error to be set to internal server error message
+	});
+
+	it('should keep retrying if the backend is in progress until it is successful', async () => {
+		// mock to return status "in progress" around 3-5 times, and then returns status of "success" with path, total_distance and total_time parameters
+		// tests fetchRoute in the hook
+		// expects the hooks "route" obj to have the parameters set above
+	});
+});
+```
+
+## Improvements
+
+### Add Testing
+
+See above on how I'd implenent it.
