@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useDebounce } from '@uidotdev/usehooks';
 import Map, { Layer, Marker, Source } from 'react-map-gl';
 import useCreateRoute from './hooks/useCreateRoute';
 import { useEffect, useState } from 'react';
@@ -26,6 +27,7 @@ function App() {
 		destination: '',
 	});
 	const [waypoints, setWaypoints] = useState<[number, number][] | null>(null);
+	const debouncedSearchTerm = useDebounce(routeData, 300);
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
@@ -48,6 +50,17 @@ function App() {
 	useEffect(() => {
 		if (waypoints) getDrivingRoute(waypoints);
 	}, [waypoints]);
+
+	useEffect(() => {
+		if (debouncedSearchTerm)
+			fetch(
+				`https://api.mapbox.com/search/geocode/v6/forward?q=${
+					routeData.origin
+				}&access_token=${import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN}`
+			)
+				.then((res) => res.json())
+				.then((data) => console.log(data));
+	}, [debouncedSearchTerm]);
 
 	const handleCreateRoute = () => {
 		createRoute(routeData);
