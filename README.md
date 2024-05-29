@@ -132,6 +132,9 @@ Main dependencies are:
 -   **axios-retry**: used for retrying a call to the backend if it's busy
 -   **react-mapbox-gl**: react wrapper for the mapbox-gl
 
+### Browser Compatibility
+Working on Google Chrome, and Edge. Not working on Firefox - as Map component is not allowed.
+
 ## Testing
 
 Unfortunately, I couldn't get the testing to work.
