@@ -95,10 +95,10 @@ function App() {
 			<div className="col-span-1 px-8 py-8">
 				<h1 className="text-2xl mb-6">Papamove</h1>
 				<form
+					autoComplete="off"
 					className=""
-					onSubmit={(event) => {
-						event.preventDefault();
-						handleCreateRoute();
+					onReset={() => {
+						setRouteData({ origin: '', destination: '' });
 					}}
 				>
 					<div className="my-2">
@@ -117,6 +117,7 @@ function App() {
 							onChange={(value) =>
 								setRouteData({ ...routeData, origin: value })
 							}
+							required
 						/>
 					</div>
 					<div className="my-2">
@@ -138,12 +139,19 @@ function App() {
 									destination: value,
 								})
 							}
+							required
 						/>
 					</div>
 					<div className="flex gap-4 my-4">
 						<button
 							className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-							type="submit"
+							type="button"
+							onClick={() => {
+								handleCreateRoute();
+							}}
+							disabled={
+								createLoading && fetchLoading && routeLoading
+							}
 						>
 							Submit
 						</button>
@@ -151,7 +159,7 @@ function App() {
 							className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
 							type="reset"
 						>
-							Reset
+							Clear
 						</button>
 					</div>
 				</form>

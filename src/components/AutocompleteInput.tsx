@@ -1,3 +1,4 @@
+// adapted from https://hackernoon.com/autocomplete-search-component-with-react-and-typescript
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 	placeholder: string;
 	value: string;
 	onChange: (value: string) => void;
+	required: boolean;
 }
 
 const AutocompleteInput = ({
@@ -16,6 +18,7 @@ const AutocompleteInput = ({
 	placeholder,
 	value,
 	onChange,
+	required,
 }: Props) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -29,12 +32,7 @@ const AutocompleteInput = ({
 		const inputValue = event.target.value;
 		onChange(inputValue);
 		if (inputValue !== '') {
-			const filteredSuggestions = names.filter(
-				(name) =>
-					name.toLowerCase().startsWith(inputValue.toLowerCase()) &&
-					name.toLowerCase() !== inputValue.toLowerCase()
-			);
-			setSuggestions(filteredSuggestions);
+			setSuggestions(names);
 		} else {
 			setSuggestions([]);
 		}
@@ -74,6 +72,7 @@ const AutocompleteInput = ({
 				onChange={handleChange}
 				onKeyDown={handleKeyDown}
 				ref={inputRef}
+				required={required}
 			/>
 
 			{suggestions.length > 0 && (
