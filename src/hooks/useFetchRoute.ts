@@ -18,9 +18,9 @@ axiosInstance.interceptors.response.use(
 			const axiosError = new AxiosError(
 				'retry', // message
 				'ERR_RETRY', // error code
-				response.config, // config, should ideally be response.config but can be empty object if not accessible
-				axiosInstance, // axios instance
-				response // response
+				response.config,
+				axiosInstance,
+				response
 			);
 			return Promise.reject(axiosError);
 		}
@@ -53,7 +53,7 @@ const useFetchRoute = () => {
 			const response = await axiosInstance.get(`/route/${token}`);
 			const data = response.data;
 
-			// Assuming that axios-retry handles the retries, we only process the final response
+			// Assuming that axios-retry handles the retries for "in progress", it will only process the final responses of "success" and "failure"
 			if (data.status === 'success') {
 				setRoute(data);
 			} else {

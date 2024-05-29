@@ -60,6 +60,7 @@ const AutocompleteInput = ({
 		setActiveSuggestion(0);
 	};
 
+	// returns an input that when updated with text it appends suggestions below it and allows the user to select them
 	return (
 		<div className="relative">
 			<input
