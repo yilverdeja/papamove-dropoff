@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { MapBoxFeatureSuggestions } from '../types';
 
 const axiosInstance = axios.create({
-	baseURL: 'https://api.mapbox.com/search/geocode/v6',
+	baseURL: 'https://api.mapbox.com',
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -27,7 +27,7 @@ const useAutocomplete = () => {
 		setError(null);
 		try {
 			const response = await axiosInstance
-				.get<MapBoxFeatureSuggestions>('/forward', {
+				.get<MapBoxFeatureSuggestions>('/search/geocode/v6/forward', {
 					params: {
 						q: query,
 					},

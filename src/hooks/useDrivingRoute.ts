@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { MapBoxDirectionsResponse } from '../types';
 
 const axiosInstance = axios.create({
-	baseURL: 'https://api.mapbox.com/directions/v5/mapbox/driving',
+	baseURL: 'https://api.mapbox.com',
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -34,7 +34,9 @@ const useDrivingRoute = () => {
 					.map((waypoint) => waypoint.join(','))
 					.join(';');
 				const response = await axiosInstance
-					.get<MapBoxDirectionsResponse>(`/${coordinatesString}`)
+					.get<MapBoxDirectionsResponse>(
+						`/directions/v5/mapbox/driving/${coordinatesString}`
+					)
 					.then((res) => res.data);
 
 				setGeoJSON({
