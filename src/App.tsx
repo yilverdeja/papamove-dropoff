@@ -8,6 +8,8 @@ import { CreateRoute } from './types';
 import ResultDisplay from './components/ResultDisplay';
 import MarkerIcon from './components/MarkerIcon';
 import useDrivingRoute from './hooks/useDrivingRoute';
+import AutocompleteInput from './components/AutocompleteInput';
+import useAutocomplete from './hooks/useAutocomplete';
 function App() {
 	const {
 		createRoute,
@@ -21,13 +23,32 @@ function App() {
 		loading: fetchLoading,
 		error: fetchError,
 	} = useFetchRoute();
-	const { getDrivingRoute, geoJSON, loading, error } = useDrivingRoute();
+	const {
+		getDrivingRoute,
+		geoJSON,
+		loading: routeLoading,
+		error: routeError,
+	} = useDrivingRoute();
+	const {
+		fetchSuggestions,
+		suggestions: sugs,
+		loading: suggestionsLoading,
+		error: suggestionsError,
+	} = useAutocomplete();
 	const [routeData, setRouteData] = useState<CreateRoute>({
 		origin: '',
 		destination: '',
 	});
+	const [suggestions, setSuggestions] = useState<{
+		origin: string[];
+		destination: string[];
+	}>({
+		origin: [],
+		destination: [],
+	});
 	const [waypoints, setWaypoints] = useState<[number, number][] | null>(null);
-	const debouncedSearchTerm = useDebounce(routeData, 300);
+	const debouncedOrigin = useDebounce(routeData.origin, 300);
+	const debouncedDestination = useDebounce(routeData.destination, 300);
 
 	useEffect(() => {
 		if (token) fetchRoute(token);
@@ -52,15 +73,18 @@ function App() {
 	}, [waypoints]);
 
 	useEffect(() => {
-		if (debouncedSearchTerm)
-			fetch(
-				`https://api.mapbox.com/search/geocode/v6/forward?q=${
-					routeData.origin
-				}&access_token=${import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN}`
-			)
-				.then((res) => res.json())
-				.then((data) => console.log(data));
-	}, [debouncedSearchTerm]);
+		if (debouncedOrigin) {
+			fetchSuggestions(routeData.origin);
+			setSuggestions({ ...suggestions, origin: sugs });
+		}
+	}, [debouncedOrigin]);
+
+	useEffect(() => {
+		if (debouncedDestination) {
+			fetchSuggestions(routeData.destination);
+			setSuggestions({ ...suggestions, destination: sugs });
+		}
+	}, [debouncedDestination]);
 
 	const handleCreateRoute = () => {
 		createRoute(routeData);
@@ -84,20 +108,15 @@ function App() {
 						>
 							Starting Location
 						</label>
-						<input
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							type="text"
-							name="origin"
+						<AutocompleteInput
+							names={suggestions.origin}
 							id="origin"
+							name="origin"
 							placeholder="Innocenter"
 							value={routeData.origin}
-							onChange={(event) =>
-								setRouteData({
-									...routeData,
-									origin: event.target.value,
-								})
+							onChange={(value) =>
+								setRouteData({ ...routeData, origin: value })
 							}
-							required
 						/>
 					</div>
 					<div className="my-2">
@@ -107,20 +126,18 @@ function App() {
 						>
 							Dropoff Point
 						</label>
-						<input
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							type="text"
-							name="dropoff"
+						<AutocompleteInput
+							names={suggestions.destination}
 							id="dropoff"
+							name="dropoff"
 							placeholder="Science Park"
 							value={routeData.destination}
-							onChange={(event) =>
+							onChange={(value) =>
 								setRouteData({
 									...routeData,
-									destination: event.target.value,
+									destination: value,
 								})
 							}
-							required
 						/>
 					</div>
 					<div className="flex gap-4 my-4">

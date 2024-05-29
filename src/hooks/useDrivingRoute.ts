@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { MapBoxDirectionsResponse } from '../types';
 import { useCallback, useState } from 'react';
+import { MapBoxDirectionsResponse } from '../types';
 
 const axiosInstance = axios.create({
 	baseURL: 'https://api.mapbox.com/directions/v5/mapbox/driving',
@@ -26,7 +26,7 @@ const useDrivingRoute = () => {
 
 	const getDrivingRoute = useCallback(
 		async (waypoints: [number, number][]) => {
-			setGeoJSON(null);
+			setGeoJSON(undefined);
 			setError(null);
 			setLoading(true);
 			try {
@@ -47,7 +47,7 @@ const useDrivingRoute = () => {
 			} catch (err) {
 				if (err instanceof Error) setError(err);
 				else setError(new Error('An unknown error has occurred'));
-				setGeoJSON(null);
+				setGeoJSON(undefined);
 				setLoading(false);
 			} finally {
 				setLoading(false);

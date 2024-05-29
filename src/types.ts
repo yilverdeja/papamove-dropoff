@@ -28,3 +28,14 @@ export interface MapBoxDirectionsResponse {
 	routes: Route[];
 	code: string;
 }
+
+interface MapBoxFeatureSuggestion {
+	properties: {
+		full_address: string;
+		name: string;
+	};
+}
+
+export interface MapBoxFeatureSuggestions {
+	features: MapBoxFeatureSuggestion[];
+}
