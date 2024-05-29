@@ -1,6 +1,10 @@
 # Papamove Dropoff App
 
+![image](https://github.com/yilverdeja/papamove-dropoff/assets/29952939/974f1359-4379-4e00-ad00-281927eb12e4)
+
 This is a web application that allows users to submit addresses of 1 pickup point and drop-off point. It displays the waypoints returned from the backend.
+
+Unfortunately, wasn't able to implement unit tests due to errors. Please see `Testing` section below.
 
 ## Features
 
@@ -240,12 +244,15 @@ describe('useFetchRoute', () => {
 
 ### Add Testing
 
-See above on how I'd implenent it.
+See above on how I'd implement it.
 
 ### UI Improvements
+Layer the form over the map on mobile screens so users don't have to scroll
 
--   Layer the form over the map on mobile screens so users don't have to scroll
--   Improve autocomplete input component
+![image](https://github.com/yilverdeja/papamove-dropoff/assets/29952939/2603de0e-eaa8-4feb-a0a7-a277e5077a27)
+
+Improve autocomplete input component
+* Allow to select out of it, or use the users input
 
 ### Additional Features
 
